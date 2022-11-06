@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { app, db } from '../db/firebase';
 
 export const useAuth = () => {
-  const [authed, setAuthed] = useState(true);
+  const [authed, setAuthed] = useState(false);
   console.log(app);
   console.log(db);
 
