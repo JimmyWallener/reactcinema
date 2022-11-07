@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { app, db } from '../db/firebase';
+import { useNavigate } from 'react-router-dom';
 
 export const useAuth = () => {
   const [authed, setAuthed] = useState(false);
-  console.log(app);
-  console.log(db);
+  const navigate = useNavigate();
 
   return {
     authed,
@@ -18,6 +17,7 @@ export const useAuth = () => {
       return new Promise<void>((res) => {
         setAuthed(false);
         res();
+        navigate('/', { replace: true });
       });
     },
   };

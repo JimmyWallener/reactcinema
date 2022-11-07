@@ -1,7 +1,7 @@
-import { LoginForm } from '../components/Form/LoginForm';
+import LoginForm from '../components/Form/LoginForm';
 import SignupForm from '../components/Form/SignupForm';
 
-export const Login = () => {
+const Login = () => {
   return (
     <div className='flex flex-col justify-center gap-6 items-center'>
       <LoginForm />
@@ -9,3 +9,5 @@ export const Login = () => {
     </div>
   );
 };
+
+export default Login;
