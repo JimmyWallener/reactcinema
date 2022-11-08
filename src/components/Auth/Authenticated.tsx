@@ -6,10 +6,10 @@ type Props = {
   children?: JSX.Element;
 };
 
-const Auth: React.FC<Props> = ({ children }) => {
+const Authenticated: React.FC<Props> = ({ children }) => {
   const { authed } = useAuth();
 
   return authed === true ? <>{children}</> : <Navigate to='/login' />;
 };
 
-export default Auth;
+export default Authenticated;

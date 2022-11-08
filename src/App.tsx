@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Auth from './components/Auth/Auth';
+import Authenticated from './components/Auth/Authenticated';
 import Layout from './components/Layout';
 import AddMovie from './pages/AddMovie';
 import Login from './pages/Login';
@@ -15,9 +15,9 @@ function App() {
         <Route
           path='/addMovie'
           element={
-            <Auth>
+            <Authenticated>
               <AddMovie />
-            </Auth>
+            </Authenticated>
           }
         />
       </Route>
