@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Authenticated from './components/Auth/Authenticated';
-import Layout from './components/Layout';
+import Layout from './components/UI/Layout';
 import AddMovie from './pages/AddMovie';
 import Login from './pages/Login';
 import Movies from './pages/Movies';

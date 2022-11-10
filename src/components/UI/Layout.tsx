@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 import Logo from './Logo';
 
 const Layout = () => {
@@ -29,7 +29,6 @@ const Layout = () => {
           >
             <li>Add Movie</li>
           </NavLink>
-          )
         </ul>
         {authed ? (
           <div className='mr-4'>
@@ -54,7 +53,7 @@ const Layout = () => {
           </div>
         )}
       </nav>
-      <main className='mt-10'>
+      <main>
         <Outlet />
       </main>
     </>

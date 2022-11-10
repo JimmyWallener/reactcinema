@@ -1,5 +1,5 @@
 const Movies = () => {
-  return <div>Movies</div>;
+  return <section className='bg-gray-900 h-screen flex'></section>;
 };
 
 export default Movies;

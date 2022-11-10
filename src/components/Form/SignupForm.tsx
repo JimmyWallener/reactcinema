@@ -5,7 +5,7 @@ class SignupForm extends Component {
     return (
       <div className='w-full max-w-xs'>
         <form className='bg-gray-300 shadow-xl rounded px-8 pt-6 pb-8 mb-4'>
-          <h3 className='text-xl mb-10 bg-gray-800 text-white uppercase'>
+          <h3 className='text-xl text-center mb-10 bg-gray-800 text-white uppercase'>
             Sign Up
           </h3>
           <div className='mb-4'>

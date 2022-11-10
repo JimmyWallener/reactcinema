@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 export const useAuth = () => {
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(true);
   const navigate = useNavigate();
 
   return {
