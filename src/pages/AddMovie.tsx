@@ -45,7 +45,9 @@ const AddMovie = () => {
 
   return (
     <section className='bg-gray-900 h-screen flex gap-12 justify-center items-center'>
-      {showModal ? <Modal error={errorMessage} clickHandler={onError} /> : null}
+      {showModal ? (
+        <Modal error={errorMessage} onClickHandler={onError} />
+      ) : null}
       <img
         src={movie}
         width='800'

@@ -7,30 +7,30 @@ const saltedPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, bcrypt.genSaltSync(10)).then((hash) => hash);
 };
 
-export const addUser = async (user: USER): Promise<boolean> => {
-  let isUserAdded = false;
-  if (!isEmailInDatabase(user.email)) {
+export const addUser = async (user: USER): Promise<void> => {
+  console.log(!(await isEmailInDatabase(user.email)));
+  if (!(await isEmailInDatabase(user.email))) {
     try {
       const docRef = await addDoc(collection(db, 'users'), {
         email: user.email,
-        password: saltedPassword(user.password),
+        password: await saltedPassword(user.password),
       });
-      isUserAdded = true;
+      console.log('Document written with ID: ', docRef.id);
     } catch (error) {
       console.log(error);
     }
   }
-  return isUserAdded;
 };
 
-const isEmailInDatabase = async (email: string): Promise<boolean> => {
+export const isEmailInDatabase = async (email: string): Promise<boolean> => {
   const querySnapshot = await getDocs(collection(db, 'users'));
+  let isEmailInDatabase = false;
 
   querySnapshot.forEach((user) => {
     if (user?.data().email === email) {
-      return true;
+      isEmailInDatabase = true;
     }
   });
 
-  return false;
+  return isEmailInDatabase;
 };
