@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "src/hooks/useAuth.ts"],
+  "include": ["src", "src/hooks/useAuth.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -35,10 +35,10 @@ const LoginForm = (): JSX.Element => {
     const { code, message } = await login(userCredentials);
 
     switch (code) {
-      case 200:
-        navigate(-1);
+      case '200':
+        navigate('/');
         break;
-      case 403:
+      case '403':
         setErrorMessage({ header: 'Login Error:', message: message });
         if (message.includes('password')) {
           setUserCredentials((prevState) => {

@@ -1,15 +1,16 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthContext } from '../../context/AuthContext';
 
 type Props = {
   children?: JSX.Element;
 };
 
 const Authenticated: React.FC<Props> = ({ children }) => {
-  const { authed } = useAuth();
+  const { loggedInUser } = useAuthContext();
+  console.log(loggedInUser.logged);
 
-  return authed === true ? <>{children}</> : <Navigate to='/login' />;
+  return loggedInUser.logged ? <>{children}</> : <Navigate to='/login' />;
 };
 
 export default Authenticated;

@@ -1,9 +1,11 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext';
 import { useAuth } from '../../hooks/useAuth';
 import Logo from './Logo';
 
 const Layout = () => {
-  const { authed, logout } = useAuth();
+  const { loggedInUser } = useAuthContext();
+  const { logout } = useAuth();
   return (
     <>
       <nav className='w-full h-20 bg-gray-900 flex items-center'>
@@ -30,7 +32,7 @@ const Layout = () => {
             <li>Add Movie</li>
           </NavLink>
         </ul>
-        {authed ? (
+        {loggedInUser.logged ? (
           <div className='mr-4'>
             <button
               className='hover:bg-red-400 w-36 bg-red-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline'

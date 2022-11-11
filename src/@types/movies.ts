@@ -5,4 +5,5 @@ export interface movieType {
   image?: string;
   link?: string;
   addedAt: Date;
+  publisher: string;
 }
