@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs-react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { USER } from '../../@types/user';
@@ -41,7 +41,9 @@ const LoginForm = (): JSX.Element => {
     });
   };
   const login = async (user: USER): Promise<responseType> => {
-    const querySnapshot = await getDocs(collection(db, 'users'));
+    const q = query(collection(db, 'users'), where('email', '==', user.email));
+
+    const querySnapshot = await getDocs(q);
     let message: responseType = {
       code: '200',
       message: '',
