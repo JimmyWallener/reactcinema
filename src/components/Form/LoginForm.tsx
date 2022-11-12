@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs-react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { USER } from '../../@types/user';
 import { useAuthContext } from '../../context/AuthContext';
@@ -26,11 +26,46 @@ const LoginForm = (): JSX.Element => {
   const navigate = useNavigate();
   const { setLoggedInUser } = useAuthContext();
   const [showModal, setShowModal] = useState(false);
+  const [queryResponse, setQueryResponse] = useState<{ code: string }>({
+    code: '',
+  });
   const [errorMessage, setErrorMessage] = useState({ header: '', message: '' });
   const [userCredentials, setUserCredentials] = useState<userProps>({
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    if (queryResponse.code === 'auth/user-not-found') {
+      setErrorMessage({
+        header: 'User not found',
+        message: 'Please check your email and try again.',
+      });
+      setUserCredentials((prevState) => {
+        return {
+          ...prevState,
+          email: '',
+        };
+      });
+      setShowModal(true);
+    } else if (queryResponse.code === 'auth/wrong-password') {
+      setErrorMessage({
+        header: 'Wrong password',
+        message: 'Please check your password and try again.',
+      });
+      setUserCredentials((prevState) => {
+        return {
+          ...prevState,
+          password: '',
+        };
+      });
+      setShowModal(true);
+    }
+    if (queryResponse.code === 'auth/success') {
+      navigate('/');
+    }
+  }, [queryResponse]);
+
   const onError = (): void => setShowModal(!showModal);
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
     setUserCredentials((prevState) => {
@@ -40,14 +75,16 @@ const LoginForm = (): JSX.Element => {
       };
     });
   };
-  const login = async (user: USER): Promise<responseType> => {
-    const q = query(collection(db, 'users'), where('email', '==', user.email));
+  const login = async (user: USER): Promise<void> => {
+    const q = query(
+      collection(db, 'users'),
+      where('email', '==', user.email.toLowerCase().trim())
+    );
 
     const querySnapshot = await getDocs(q);
-    let message: responseType = {
-      code: '200',
-      message: '',
-    };
+    querySnapshot.empty
+      ? setQueryResponse({ code: 'auth/user-not-found' })
+      : null;
 
     querySnapshot.forEach(async (account) => {
       const { email, password, id } = account.data();
@@ -56,25 +93,12 @@ const LoginForm = (): JSX.Element => {
         email === user.email.toLowerCase().trim() &&
         (await matchPassword(password, user.password))
       ) {
-        message = {
-          code: '200',
-          message: 'Login successful',
-        };
+        setQueryResponse({ code: 'auth/success' });
         setLoggedInUser({ logged: true, token: id });
-      }
-      if (!(email === user.email.toLowerCase().trim())) {
-        message = {
-          code: '403',
-          message: 'Incorrect Email / No such Email',
-        };
       } else {
-        message = {
-          code: '403',
-          message: 'Invalid password',
-        };
+        setQueryResponse({ code: 'auth/wrong-password' });
       }
     });
-    return message;
   };
 
   // Depending on the response from the server, show a modal with the error message,
@@ -83,40 +107,7 @@ const LoginForm = (): JSX.Element => {
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    const { code, message } = await login(userCredentials);
-
-    switch (code) {
-      case '200':
-        navigate('/');
-        break;
-      case '403':
-        setErrorMessage({ header: 'Login Error:', message: message });
-        if (message.includes('password')) {
-          setUserCredentials((prevState) => {
-            return {
-              ...prevState,
-              password: '',
-            };
-          });
-        } else {
-          setUserCredentials((prevState) => {
-            return {
-              ...prevState,
-              email: '',
-            };
-          });
-        }
-        setShowModal(true);
-        break;
-      default:
-        setErrorMessage({
-          header: 'Unknown Error:',
-          message:
-            'Something must have gone really bad for you to see this! \n Please try again',
-        });
-        setShowModal(true);
-        console.error(code);
-    }
+    login(userCredentials);
   };
 
   return (
