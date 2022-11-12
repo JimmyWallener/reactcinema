@@ -1,6 +1,10 @@
+import bcrypt from 'bcryptjs-react';
+import { collection, getDocs } from 'firebase/firestore';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { USER } from '../../@types/user';
+import { useAuthContext } from '../../context/AuthContext';
+import { db } from '../../db/firebase';
 import Modal from '../UI/Modal';
 
 interface userProps {
@@ -8,15 +12,25 @@ interface userProps {
   password: string;
 }
 
+type responseType = {
+  code: string;
+  message: string;
+};
+
+// async function that returns a promise after comparing the password
+const matchPassword = (storedPassword: string, inputPassword: string) => {
+  return bcrypt.compare(inputPassword, storedPassword);
+};
+
 const LoginForm = (): JSX.Element => {
   const navigate = useNavigate();
+  const { setLoggedInUser } = useAuthContext();
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ header: '', message: '' });
   const [userCredentials, setUserCredentials] = useState<userProps>({
     email: '',
     password: '',
   });
-  const { login } = useAuth();
   const onError = (): void => setShowModal(!showModal);
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
     setUserCredentials((prevState) => {
@@ -26,6 +40,41 @@ const LoginForm = (): JSX.Element => {
       };
     });
   };
+  const login = async (user: USER): Promise<responseType> => {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    let message: responseType = {
+      code: '200',
+      message: '',
+    };
+
+    querySnapshot.forEach(async (account) => {
+      const { email, password, id } = account.data();
+
+      if (
+        email === user.email.toLowerCase().trim() &&
+        (await matchPassword(password, user.password))
+      ) {
+        message = {
+          code: '200',
+          message: 'Login successful',
+        };
+        setLoggedInUser({ logged: true, token: id });
+      }
+      if (!(email === user.email.toLowerCase().trim())) {
+        message = {
+          code: '403',
+          message: 'Incorrect Email / No such Email',
+        };
+      } else {
+        message = {
+          code: '403',
+          message: 'Invalid password',
+        };
+      }
+    });
+    return message;
+  };
+
   // Depending on the response from the server, show a modal with the error message,
   // else on 200, navigate to the previous page
   const onSubmitHandler = async (
