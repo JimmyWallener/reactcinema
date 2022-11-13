@@ -28,6 +28,9 @@ const AddMovie = () => {
       poster: image,
       publisher: loggedInUser.id,
     };
+
+    // Add movie to the database and redirect to the home page
+    // show a modal on error or success
     if (!addMovie(movieData)) {
       setShowModal(true);
       setErrorMessage({
@@ -43,8 +46,12 @@ const AddMovie = () => {
       setTimeout(() => void navigate('/'), 2000);
     }
   };
+
+  // Change the state of the modal
   const onError = (): void => setShowModal(!showModal);
 
+  // onChange handler for image input, which helps with the validation for right image format and size
+  // and also sets the image preview based on base64 encoded image
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
@@ -73,7 +80,7 @@ const AddMovie = () => {
       onError();
     }
   };
-
+  // input fields are uncontrolled
   return (
     <section className='bg-gray-900 h-screen flex gap-12 justify-center items-center'>
       {showModal ? (

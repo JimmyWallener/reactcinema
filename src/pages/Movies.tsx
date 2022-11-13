@@ -16,16 +16,17 @@ const Movies = () => {
     getMovies().then((movies) => setMovies(movies));
   }, []);
 
+  // checks if user is owner of the movie and returns boolean for the delete button to appear or not
   const isUserOwner = (publisher: string) => {
     return publisher === loggedInUser.id ? true : false;
   };
-
+  // Delete movie from the database and updates array of movies
   const onDelete = async (id: string | undefined) => {
     await removeMovie(id).then(() => {
       setMovies(movies.filter((movie) => movie.id !== id));
     });
   };
-
+  // redirects to page with more info about the movie
   const onReadMore = (id: string | undefined, movie: IMovie) => {
     navigate(`/movies/${id}`, { state: movie });
   };

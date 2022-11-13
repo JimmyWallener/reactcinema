@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs-react';
 
+// Create a hash from a password and returns it
 export const saltedPassword = async (password: string): Promise<string> => {
   return await bcrypt
     .hash(password, bcrypt.genSaltSync(10))

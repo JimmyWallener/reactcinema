@@ -1,3 +1,4 @@
+// Encodes a image to base64
 const encodeToImageBase64 = (image: Blob) => {
   const fs = new FileReader();
   fs.readAsDataURL(image);

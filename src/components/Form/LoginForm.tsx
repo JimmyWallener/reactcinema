@@ -20,6 +20,7 @@ const LoginForm = (): JSX.Element => {
     password: '',
   });
 
+  // Handle modal status change and set error message, redirects on successful login
   useEffect(() => {
     if (queryResponse.code === 'auth/user-not-found') {
       setErrorMessage({
@@ -51,8 +52,10 @@ const LoginForm = (): JSX.Element => {
     }
   }, [queryResponse]);
 
+  // Changes the state of the modal
   const onError = (): void => setShowModal(!showModal);
 
+  // Handle onChange event for input fields, which helps with the validation
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
     setUserCredentials((prevState) => {
       return {
@@ -61,6 +64,8 @@ const LoginForm = (): JSX.Element => {
       };
     });
   };
+
+  // Checks if the user(email) exists in the database and if the password is correct, handles the response
   const login = async (user: USER): Promise<void> => {
     const q = query(
       collection(db, 'users'),
@@ -85,6 +90,7 @@ const LoginForm = (): JSX.Element => {
     });
   };
 
+  // Triggers the login function on form submit
   const onSubmitHandler = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {

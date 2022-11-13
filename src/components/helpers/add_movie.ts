@@ -2,6 +2,7 @@ import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { IMovie } from '../../@types/movies';
 import { db } from '../../db/firebase';
 
+// Add a movie to the database and return boolean
 export const addMovie = async (movie: IMovie): Promise<boolean> => {
   if (!(await isTitleInDatabase(movie.title))) {
     const docRef = await addDoc(collection(db, 'movies'), {
@@ -17,7 +18,7 @@ export const addMovie = async (movie: IMovie): Promise<boolean> => {
   }
   return false;
 };
-
+// Check if the movie title is already in the database
 export const isTitleInDatabase = async (title: string): Promise<boolean> => {
   const movieQuery = query(
     collection(db, 'movies'),

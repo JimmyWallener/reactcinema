@@ -6,6 +6,7 @@ type Props = {
   children?: JSX.Element;
 };
 
+// This component is used to wrap the routes that require authentication
 const Authenticated: React.FC<Props> = ({ children }) => {
   const { loggedInUser } = useAuthContext();
 

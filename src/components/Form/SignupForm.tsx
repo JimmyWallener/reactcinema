@@ -20,12 +20,13 @@ class SignupForm extends Component<
     this.redirectUser = this.redirectUser.bind(this);
   }
 
+  // This function is used to change the state of the modal
   onModalStatusChange = (): void => {
     this.setState((prevState) => ({ showModal: !prevState.showModal }));
   };
 
+  // Redirects user after successful signup and automatically logs them in by changing the state of the AuthContext
   redirectUser = (id: string | null): void => {
-    console.log('signup id: ', id);
     if (id) {
       this.props.onLoggedIn({ logged: true, id: id });
       this.props.navigate('/');
@@ -45,43 +46,30 @@ class SignupForm extends Component<
   onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     // check if password on second input field is the same as the first
-    // if not, show error message
+    // if not, change the border color to red
     if (e.target.name === 'verify_password') {
       if (
         e.target.value !==
         (document.getElementById('signup_password') as HTMLInputElement).value
       ) {
-        // change border color to red on verify_password input field
         e.target.style.borderColor = 'red';
       } else {
-        // change border color to green on verify_password input field
         e.target.style.borderColor = 'green';
       }
     }
   };
 
+  // if everything checks out, add user to database and redirect user
   onSubmitHandler = async (
     e: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     e.preventDefault();
-    // after getting all the data from the form, send it to the database
-    // if successful, redirect to login page
-    // if not, show error message
+
     const formData = new FormData(e.target as HTMLFormElement);
 
     const data = Object.fromEntries(formData);
 
-    if (data.password !== data.verify_password) {
-      (
-        document.getElementById('verify_password') as HTMLInputElement
-      ).style.borderColor = 'red';
-    } else {
-      (
-        document.getElementById('verify_password') as HTMLInputElement
-      ).style.borderColor = 'green';
-    }
     if (data.password === data.verify_password) {
-      // send data to database
       this.redirectUser(
         await addUser({
           email: data.email.toString().toLowerCase().trim(),

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 import { AuthContextType, IAuth } from '../@types/auth';
 
+// This is the context that is used to store the user data for the entire application
 const AuthContext = createContext<AuthContextType>({
   loggedInUser: { logged: false, id: '' },
   setLoggedInUser: () => {},
