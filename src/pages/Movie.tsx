@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IMovie } from '../@types/movies';
-import Card from '../components/UI/Card';
 
 const Movie = () => {
   const { state } = useLocation();
@@ -9,7 +8,10 @@ const Movie = () => {
   return (
     <section className='bg-gray-900 min-h-screen w-screen flex justify-center items-center'>
       <div className='gap-4 my-14'>
-        <Card key={movie.id}>
+        <div
+          key={movie.id}
+          className='p-2 my-2 w-[15vw] break-all flex flex-grow flex-shrink flex-col shadow rounded-2xl bg-white'
+        >
           <ul className='flex flex-col'>
             <li className='block h-1/4'>
               <p className='font-bold flex flex-col ml-2'>{movie.title}</p>
@@ -33,7 +35,7 @@ const Movie = () => {
                 <p>{movie.description}</p>
               </li>
             </div>
-            <div className='h-full'>
+            <div className=''>
               <li className='w-fit py-3 block'>
                 <h1>Synopsis: </h1>
                 <p>{movie.long_description}</p>
@@ -46,7 +48,7 @@ const Movie = () => {
           >
             Go Back
           </button>
-        </Card>
+        </div>
       </div>
     </section>
   );
