@@ -1,26 +1,11 @@
-import bcrypt from 'bcryptjs-react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { USER } from '../../@types/user';
+import { IUser, USER } from '../../@types/user';
 import { useAuthContext } from '../../context/AuthContext';
 import { db } from '../../db/firebase';
+import { matchPassword } from '../../utils/hashing';
 import Modal from '../UI/Modal';
-
-interface userProps {
-  email: string;
-  password: string;
-}
-
-type responseType = {
-  code: string;
-  message: string;
-};
-
-// async function that returns a promise after comparing the password
-const matchPassword = (storedPassword: string, inputPassword: string) => {
-  return bcrypt.compare(inputPassword, storedPassword);
-};
 
 const LoginForm = (): JSX.Element => {
   const navigate = useNavigate();
@@ -30,7 +15,7 @@ const LoginForm = (): JSX.Element => {
     code: '',
   });
   const [errorMessage, setErrorMessage] = useState({ header: '', message: '' });
-  const [userCredentials, setUserCredentials] = useState<userProps>({
+  const [userCredentials, setUserCredentials] = useState<IUser>({
     email: '',
     password: '',
   });
@@ -67,6 +52,7 @@ const LoginForm = (): JSX.Element => {
   }, [queryResponse]);
 
   const onError = (): void => setShowModal(!showModal);
+
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>): void => {
     setUserCredentials((prevState) => {
       return {
@@ -87,22 +73,18 @@ const LoginForm = (): JSX.Element => {
       : null;
 
     querySnapshot.forEach(async (account) => {
-      const { email, password, id } = account.data();
+      const { password } = account.data();
 
-      if (
-        email === user.email.toLowerCase().trim() &&
-        (await matchPassword(password, user.password))
-      ) {
+      if (await matchPassword(password, user.password)) {
         setQueryResponse({ code: 'auth/success' });
-        setLoggedInUser({ logged: true, token: id });
+
+        setLoggedInUser({ logged: true, id: account.id });
       } else {
         setQueryResponse({ code: 'auth/wrong-password' });
       }
     });
   };
 
-  // Depending on the response from the server, show a modal with the error message,
-  // else on 200, navigate to the previous page
   const onSubmitHandler = async (
     e: FormEvent<HTMLFormElement>
   ): Promise<void> => {

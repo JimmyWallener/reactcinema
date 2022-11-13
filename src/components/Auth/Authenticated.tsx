@@ -8,7 +8,6 @@ type Props = {
 
 const Authenticated: React.FC<Props> = ({ children }) => {
   const { loggedInUser } = useAuthContext();
-  console.log(loggedInUser.logged);
 
   return loggedInUser.logged ? <>{children}</> : <Navigate to='/login' />;
 };

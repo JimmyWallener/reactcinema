@@ -1,11 +1,20 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
-import { useAuth } from '../../hooks/useAuth';
+import Footer from '../Footer';
 import Logo from './Logo';
 
 const Layout = () => {
-  const { loggedInUser } = useAuthContext();
-  const { logout } = useAuth();
+  const { loggedInUser, setLoggedInUser } = useAuthContext();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    return new Promise<void>((res) => {
+      setLoggedInUser({ logged: false, id: '' });
+      res();
+      navigate('/');
+    });
+  };
+
   return (
     <>
       <nav className='w-full h-20 bg-gray-900 flex items-center'>
@@ -55,9 +64,10 @@ const Layout = () => {
           </div>
         )}
       </nav>
-      <main>
+      <main className='overflow-x-hidden'>
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 };

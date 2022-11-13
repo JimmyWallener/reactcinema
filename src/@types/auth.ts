@@ -1,6 +1,6 @@
 export interface IAuth {
   logged: boolean;
-  token: string;
+  id: string;
 }
 
 export type AuthContextType = {

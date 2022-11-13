@@ -1,16 +1,47 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IMovie } from '../@types/movies';
 import Poster from '../assets/mock_poster.png';
+import { addMovie } from '../components/helpers/add_movie';
 import Modal from '../components/UI/Modal';
+import { useAuthContext } from '../context/AuthContext';
 import encodeToImageBase64 from '../utils/base64';
 
 const AddMovie = () => {
-  const [movie, setMovie] = useState(Poster);
+  const navigate = useNavigate();
+  const { loggedInUser } = useAuthContext();
+  const [moviePoster, setMoviePoster] = useState(Poster);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState({ header: '', message: '' });
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('Jooohooo');
-    console.log(movie);
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData);
+    const image = moviePoster;
+    const movieData: IMovie = {
+      title: data.title.toString(),
+      description: data.short_description.toString(),
+      long_description: data.long_description.toString(),
+      addedAt: new Date().toLocaleDateString(),
+      poster: image,
+      publisher: loggedInUser.id,
+    };
+    if (!addMovie(movieData)) {
+      setShowModal(true);
+      setErrorMessage({
+        header: 'Movie already exists',
+        message: 'Movie with that title already exists in the database',
+      });
+    } else {
+      setShowModal(true);
+      setErrorMessage({
+        header: 'Movie added',
+        message: 'Movie was added successfully',
+      });
+      setTimeout(() => void navigate('/'), 2000);
+    }
   };
   const onError = (): void => setShowModal(!showModal);
 
@@ -26,11 +57,11 @@ const AddMovie = () => {
       if (e.target.files![0].size < 1000000) {
         const file = e.target.files![0];
         const base64: any = await encodeToImageBase64(file);
-        setMovie(base64);
+        setMoviePoster(base64);
       } else {
         setErrorMessage({
           header: 'File Size Error:',
-          message: 'File is too big',
+          message: 'File is too big, please choose a smaller file (1MB max)',
         });
         onError();
       }
@@ -49,7 +80,7 @@ const AddMovie = () => {
         <Modal error={errorMessage} onClickHandler={onError} />
       ) : null}
       <img
-        src={movie}
+        src={moviePoster}
         width='800'
         height='600'
         alt='movie-poster'
@@ -120,8 +151,8 @@ const AddMovie = () => {
           </label>
           <input
             type='file'
-            name='file'
-            id='file'
+            name='poster'
+            id='poster'
             accept='image/png,image/jpeg'
             onChange={onChange}
           />
@@ -136,7 +167,7 @@ const AddMovie = () => {
 
           <button
             type='reset'
-            onClick={() => setMovie(Poster)}
+            onClick={() => setMoviePoster(Poster)}
             className='shadow bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
           >
             Reset Form

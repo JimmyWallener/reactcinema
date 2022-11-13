@@ -1,12 +1,15 @@
 import { Component, Fragment, ReactNode } from 'react';
-import { addUser, isEmailInDatabase } from '../mockApi/add_user';
+import { addUser, isEmailInDatabase } from '../helpers/add_user';
 import Modal from '../UI/Modal';
 
 type myState = {
   showModal: boolean;
 };
 
-class SignupForm extends Component<{ navigate: any }, myState> {
+class SignupForm extends Component<
+  { navigate: any; onLoggedIn: any },
+  myState
+> {
   constructor(props: any) {
     super(props);
     this.state = { showModal: false };
@@ -21,8 +24,12 @@ class SignupForm extends Component<{ navigate: any }, myState> {
     this.setState((prevState) => ({ showModal: !prevState.showModal }));
   };
 
-  redirectUser = (): void => {
-    this.props.navigate('/');
+  redirectUser = (id: string | null): void => {
+    console.log('signup id: ', id);
+    if (id) {
+      this.props.onLoggedIn({ logged: true, id: id });
+      this.props.navigate('/');
+    }
   };
 
   // check if email is in database after unfocusing email input, return modal if true
@@ -53,7 +60,9 @@ class SignupForm extends Component<{ navigate: any }, myState> {
     }
   };
 
-  onSubmitHandler = (e: React.FormEvent<HTMLFormElement>): void => {
+  onSubmitHandler = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     // after getting all the data from the form, send it to the database
     // if successful, redirect to login page
@@ -73,11 +82,12 @@ class SignupForm extends Component<{ navigate: any }, myState> {
     }
     if (data.password === data.verify_password) {
       // send data to database
-      addUser({
-        email: data.email.toString().toLowerCase().trim(),
-        password: data.password.toString(),
-      });
-      this.redirectUser();
+      this.redirectUser(
+        await addUser({
+          email: data.email.toString().toLowerCase().trim(),
+          password: data.password.toString(),
+        })
+      );
     }
   };
 

@@ -5,6 +5,7 @@ import Layout from './components/UI/Layout';
 import AuthContextProvider from './context/AuthContext';
 import AddMovie from './pages/AddMovie';
 import Login from './pages/Login';
+import Movie from './pages/Movie';
 import Movies from './pages/Movies';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<Movies />} />
           <Route path='/movies' element={<Movies />} />
+          <Route path='/movies/:title' element={<Movie />} />
           <Route path='/login' element={<Login />} />
           <Route
             path='/addMovie'

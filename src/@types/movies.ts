@@ -1,9 +1,10 @@
-export interface movieType {
+export interface IMovie {
+  id?: string;
   title: string;
   description: string;
   long_description: string;
-  image?: string;
+  poster?: string;
   link?: string;
-  addedAt: Date;
+  addedAt: Date | string;
   publisher: string;
 }
