@@ -130,7 +130,8 @@ const AddMovie = () => {
             htmlFor='long_description'
             className='block text-gray-700 text-sm text-left font-bold mb-2'
           >
-            Long Description of the Movie:
+            Long Description of the Movie{' '}
+            <span className='font-light'>(Optional)</span>:
           </label>
           <textarea
             cols={40}
@@ -147,7 +148,7 @@ const AddMovie = () => {
             htmlFor='file'
             className='block text-gray-700 text-sm text-left font-bold mb-2'
           >
-            Add a Movie Poster:
+            Add a Movie Poster <span className='font-light'>(Optional)</span>:
           </label>
           <input
             type='file'
